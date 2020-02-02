@@ -1,47 +1,79 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple Map</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    ​  <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+      <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+      <!-- Latest compiled and minified Bootstrap 3.3.7 CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <link rel="stylesheet" type="text/css" href="../public/css/site.css">
+      <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet"> 
+    <title>Pavilion</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
-      <!-- Latest compiled and minified Bootstrap 3.3.7 CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
-
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        margin: 20px;
-        height: 90%;
+        height: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
-        height: 90%;
+        height: 100%;
         margin: 0;
         padding: 0;
       }
     </style>
   </head>
   <body>
+    <img src="../img/Pavillion_nav.png" class="img-responsive" alt="pavilion" />
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header" id="header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+          </button>
+        </div>
+        <form class="navbar-form navbar-right">
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown">
+              <span class="glyphicon glyphiconuser"></span>&nbsp;&nbsp;${session.user.userId}}&nbsp;&nbsp;<span
+                class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="userMenu">
+              <li><a href="/userHistory">User History</a></li>
+              <li><a href="/logout">Log Out</a></li>
+            </ul>
+          </div>
+        </form>
+        <ul class="nav navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/success">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/activities">Activity List</a>
+          </li>
+        </ul>
+ 
+      </div><!-- /.container-fluid -->
+    </nav>
     <div id="map"></div>
-    <script src="https://js.radar.io/v1-beta/radar.js"></script>
-
     <script>
-      var map, infoWindow,pos;
-      function initMap() 
-      {
+        var map, infoWindow;
+        function initMap() {
           map = new google.maps.Map(document.getElementById('map'), {
-                                                                        center: {lat: -34.397, lng: 150.644},
-                                                                        zoom: 21
-                                                                      });
+            center: {lat: -34.397, lng: 150.644},
+            zoom: 17
+          });
          infoWindow = new google.maps.InfoWindow;
   
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
-         pos = {
+        var pos = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
@@ -59,79 +91,87 @@
     }
   }
   
-  function handleLocationError(browserHasGeolocation, infoWindow, pos) 
-  {
-      infoWindow.setPosition(pos);
-      infoWindow.setContent(browserHasGeolocation ?
-                            'Error: The Geolocation service failed.' :
-                            'Error: Your browser doesn\'t support geolocation.');
-      infoWindow.open(map);
+  function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+                          'Error: The Geolocation service failed.' :
+                          'Error: Your browser doesn\'t support geolocation.');
+    infoWindow.open(map);
   }
 
+  function addMarker(location) {
+        marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+    }
+  
   function getUsersNearby() {
-      Radar.setUserId("test");
-      Radar.trackOnce((status, location, user, events) => {
-      const url = "https://api.radar.io/v1/geofences/venue/1";
-       if (status === Radar.STATUS.SUCCESS) {
-        let data = {
-          "live": true,
-          "description": "user's location",
-          "type": "circle",
-          "coordinates": user.location.geometry.coordinates,
-          "radius": 50 };
-          
-        const request = new Request(url, {
-                method: 'PUT',
-                body: JSON.stringify(data),
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                },
-            });
-            let temp = [];
-                        // Send the request
-                        fetch(request)
-                            .then((res) => {
-                              res.json();
-                            })
-                            .then((jsonResult) => {
-                                // Although this is a post request, sometimes you might return JSON as well
-                                temp = jsonResult;
+    Radar.initialize('prj_test_pk_ed84d7dbfcdf8375f6dff93323fcedf05114a587');
+    Radar.setPlacesProvider(Radar.PLACES_PROVIDER.FACEBOOK);
+    Radar.trackOnce((status, location, user, events) => {
+    const url = "https://api.radar.io/v1/geofences/venue/1";
+    console.log(status, user);
+    if (status === Radar.STATUS.SUCCESS) {
+      console.log("success");
+      let data = {
+        "live": true,
+        "description": "user's location",
+        "type": "circle",
+        "coordinates": user.location.coordinates,
+        "radius": 5000
+      }
 
-                            }).catch((error) => {
-                                // if an error occured it will be logged to the JavaScript console here.
-                                console.log("An error occured with fetch:", error)
-                            })
-                    }
-              });
+      fetch('https://api.radar.io/v1/users', {
+      method:'GET', 
+      headers: {'Authorization': 'prj_live_sk_05fe329493871e658e4522c67caa29720d0763b0'}
+    })
+    	.then((res) => { 
+	        return res.json()
+	    })
+	    .then((jsonResult) => {
+          console.log('Result:', jsonResult)
+          const users = jsonResult.users;
+          for (let i = 0; i < users.length; i++) {
+            if ((Math.abs(users[i].location.coordinates[1] - user.location.coordinates[1])) < 5000) {
+            marker = new google.maps.LatLng(users[i].location.coordinates[1], users[i].location.coordinates[0]);
+            addMarker(marker);
             }
-  </script>
+          }
+	    }).catch((error) => {
+	        console.log("An error occured with fetch:", error)
+	    })
       
+    }});
+
+    } 
+    </script>
+        <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px 5px 20px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-primary pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-danger pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-info pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-warning pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-secondary pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-primary pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-danger pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-info pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-warning pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-secondary pull" style="margin: 5px 10px;">Get Users</button>
+        <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px;">Get Users</button>
+    <footer>
+      <div class="container"><span class="text-muted">© 2020 Copyright
+        by The Pavilion Team. All Rights Reserve.</span></div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+​
+  <!-- Latest compiled and minified Bootstrap 3.3.7 JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6kV3y6EWJjupx6zfH-h4l9YAlf5onTKw&callback=initMap"
     async defer></script>
-    <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px 5px 20px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-primary pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-danger pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-info pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-warning pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-secondary pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-primary pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-danger pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-info pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-warning pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-secondary pull" style="margin: 5px 10px;">Get Users</button>
-    <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px;">Get Users</button>
-
-
-
-      <!-- Latest compiled and minified jQuery 3.2.1 JavaScript -->
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"
-  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-
-<!-- Latest compiled and minified Bootstrap 3.3.7 JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-  integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-  crossorigin="anonymous"></script>
+    <script src="https://js.radar.io/v1.1.0/radar.min.js" integrity="sha384-9gzMIZTQDnuwordlQUv+j9r2TDNLAaKXhSk+p/1jZV0tlnDQ8Bu6YVmTbLIG+dRg" crossorigin="anonymous"></script>
   </body>
 </html>
