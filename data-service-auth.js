@@ -9,6 +9,8 @@ var userSchema = new Schema({
     },
     "password" : String,
     "email" : String,
+    "age" : Number,
+    "gender" : String,
     "loginHistory" :  [{ "dateTime" : Date, "userAgent" : String }]
 });
 

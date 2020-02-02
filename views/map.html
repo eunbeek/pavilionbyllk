@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+      <!-- Latest compiled and minified Bootstrap 3.3.7 CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
+
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        margin: 20px;
+        height: 90%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 90%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="https://js.radar.io/v1-beta/radar.js"></script>
+
+    <script>
+      var map, infoWindow,pos;
+      function initMap() 
+      {
+          map = new google.maps.Map(document.getElementById('map'), {
+                                                                        center: {lat: -34.397, lng: 150.644},
+                                                                        zoom: 21
+                                                                      });
+         infoWindow = new google.maps.InfoWindow;
+  
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+         pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+  
+        infoWindow.setPosition(pos);
+        infoWindow.setContent('Current Location');
+        infoWindow.open(map);
+        map.setCenter(pos);
+      }, function() {
+        handleLocationError(true, infoWindow, map.getCenter());
+      });
+    } else {
+      // Browser doesn't support Geolocation
+      handleLocationError(false, infoWindow, map.getCenter());
+    }
+  }
+  
+  function handleLocationError(browserHasGeolocation, infoWindow, pos) 
+  {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(browserHasGeolocation ?
+                            'Error: The Geolocation service failed.' :
+                            'Error: Your browser doesn\'t support geolocation.');
+      infoWindow.open(map);
+  }
+
+  function getUsersNearby() {
+      Radar.setUserId("test");
+      Radar.trackOnce((status, location, user, events) => {
+      const url = "https://api.radar.io/v1/geofences/venue/1";
+       if (status === Radar.STATUS.SUCCESS) {
+        let data = {
+          "live": true,
+          "description": "user's location",
+          "type": "circle",
+          "coordinates": user.location.geometry.coordinates,
+          "radius": 50 };
+          
+        const request = new Request(url, {
+                method: 'PUT',
+                body: JSON.stringify(data),
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+            });
+            let temp = [];
+                        // Send the request
+                        fetch(request)
+                            .then((res) => {
+                              res.json();
+                            })
+                            .then((jsonResult) => {
+                                // Although this is a post request, sometimes you might return JSON as well
+                                temp = jsonResult;
+
+                            }).catch((error) => {
+                                // if an error occured it will be logged to the JavaScript console here.
+                                console.log("An error occured with fetch:", error)
+                            })
+                    }
+              });
+            }
+  </script>
+      
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6kV3y6EWJjupx6zfH-h4l9YAlf5onTKw&callback=initMap"
+    async defer></script>
+    <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px 5px 20px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-primary pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-danger pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-info pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-warning pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-secondary pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-primary pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-danger pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-info pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-warning pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-secondary pull" style="margin: 5px 10px;">Get Users</button>
+    <button onclick="getUsersNearby()" class="btn btn-success pull" style="margin: 5px 10px;">Get Users</button>
+
+
+
+      <!-- Latest compiled and minified jQuery 3.2.1 JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+<!-- Latest compiled and minified Bootstrap 3.3.7 JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+  integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+  crossorigin="anonymous"></script>
+  </body>
+</html>

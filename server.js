@@ -11,7 +11,11 @@ var clientSessions = require('client-sessions');
 /********************Including Module************************/
 // Port 
 var HTTP_PORT = process.env.PORT || 8080;
-
+    var activityData = [{act_id:"1", act_title:"Bowling", maxNum: 5,act_category:"Sport", activityContent:"hahahahahah" }, 
+                        {act_id:"2", act_title:"Iceskating", maxNum: 5,act_category:"Sport", activityContent:"hahahahahah" },
+                        {act_id:"3", act_title:"Fishing", maxNum: 5,act_category:"Survive", activityContent:"hahahahahah" },
+                        {act_id:"4", act_title:"Singing", maxNum: 5,act_category:"Music", activityContent:"hahahahahah" },
+                        {act_id:"5", act_title:"Playing Boardgame", maxNum: 5,act_category:"Game", activityContent:"hahahahahah" }];
 // Access 
 app.use(express.static("views"));
 app.use(express.static("public"));
@@ -99,18 +103,23 @@ app.get("/", function(req,res){
 });
 
 // GET about url path
-app.get("/about", function(req,res){
-  res.render('about');
+app.get("/success",ensureLogin, function(req,res){
+  res.render('success');
 });
 
 // =================================PAVILION=================================================== //
 app.get("/activities",ensureLogin,function(req,res){
-  dser.getAllActivities()
-      .then((data)=>{if(data.length >0)
-                    {res.render("activities",{activities: data});}
-                    else{res.render("activities",{message:"no results"})}})
-      .catch((err)=>{res.render("activities",{message:"no results"})});
+
+  res.render("activities",{activities: activityData });
+
 });
+
+app.get("/activity/:id",ensureLogin,(req,res)=>{
+  res.sendFile(path.join(__dirname, "/views/map.html"));
+});
+
+
+
 // ============================================================================================ //
 
 // GET login page
@@ -137,7 +146,7 @@ app.post("/login",function(req,res){
       email: user.email,// authenticated user's email
       loginHistory: user.loginHistory// authenticated user's loginHistory
       }
-    res.redirect('/');
+    res.redirect('/success');
    }).catch((err)=>{res.render('login', {errorMessage: err, userName: req.body.userName});});
    
 });

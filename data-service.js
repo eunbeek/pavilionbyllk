@@ -11,6 +11,7 @@
     });
     //handle authenticate 
     sequelize.authenticate().then(() => {
+        
         console.log('Connection has been established successfully.');
     }).catch((err) => {
         console.log('Unable to connect to the database:', err);
@@ -23,15 +24,10 @@
                          primaryKey: true,
                          autoIncrement : true
                       },
-        userName : Sequelize.STRING,
         act_title : Sequelize.STRING,
         maxNum : Sequelize.INTEGER,
-        email : Sequelize.STRING,
-        addressStreet : Sequelize.STRING,
-        postalCode: Sequelize.STRING,
+        act_category: Sequelize.STRING,
         activityContent: Sequelize.STRING,
-        activityStatus : Sequelize.STRING,
-        activityDate : Sequelize.STRING
     });
    
     
@@ -54,4 +50,40 @@
                             });
                });
            }
-  
+    
+    module.exports.addActivity = function(activityData){
+        return new Promise(function(resolve, reject){ 
+            sequelize.sync()
+                     .then(()=>{
+                         for( let i in activityData)
+                         {
+                             if(activityData[i] == "")
+                             {
+                                activityData[i] = null;
+                             }
+                         }
+                         resolve(Activity.create({
+                            act_id : activityData.act_id,
+                            userName : activityData.userName,
+                            act_title : activityData.act_title,
+                            maxNum : activityData.maxNum,
+                            email : activityData.email,
+                            gender: activityData.gender,
+                            age: activityData.age,
+                            act_category: activityData.act_category,
+                            addressStreet : activityData.addressStreet,
+                            postalCode: activityData.postalCode,
+                            activityContent: activityData.activityContent,
+                            activityStatus : activityData.activityStatus,
+                            activityDate : activityData.activityDate
+                         })
+                        .catch((err)=>{
+                            reject("unable to create employee");
+                        }));
+                     })
+                     .catch((err)=>{
+                        reject("unable to create employee");
+                    });
+        });
+
+    }

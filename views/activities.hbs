@@ -1,33 +1,34 @@
 <div class="row">
  <div class="col-md-12">
- <h2>Employees
-     <a href="/activity/add" class="btn btn-success pull-right">Add New Employee</a>
- </h2>
+ <h2>Activity</h2>
  <hr />
+        <div>
+
+        </div>
         <div class="table-responsive">
         <table class="table ">
             <thead>
             <tr>
                 <th>Activity&nbsp;Num</th>
-                <th>Full&nbsp;Name</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Manager&nbsp;ID</th>
-                <th>Status</th>
-                <th>Department</th>
-                <th>Hired&nbsp;On</th>
+                <th>Activity Name</th>
+                <th>Max Number of People</th>
+                <th>Category</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
- 
+                {{#each activities}}
+                    <tr>
+                        <td>{{act_id}}</td>
+                        <td>{{act_title}}</td>
+                        <td>{{maxNum}}</td>
+                        <td>{{act_category}}</td>
+                        <td><a href="/activity/{{act_id}}" class="btn btn-success pull-right">Let's try together</a></td>
+                    </tr>
+                {{/each}}
             </tbody>
         </table>
         </div>
  </div>
-
-<div class="col-md-12 text-center">
-    <strong>{{message}}</strong>
-</div>
 
 </div>
